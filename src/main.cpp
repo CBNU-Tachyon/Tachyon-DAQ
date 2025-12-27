@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include <SD.h>
+#include "SdFat.h"
 #include <ArduinoJson.h>
 #include <FreeRTOS.h>
 #include "BMI088.h"
@@ -47,6 +47,9 @@ struct VehicleData
 QueueHandle_t loggingQueue;
 QueueHandle_t telemetryQueue;
 
+FsFile logFile;
+SdFat SD;
+
 // BMI088 IMU 센서 인스턴스
 Bmi088 imu(SPI, AccelCS, GyroCS); // SPI, Accel/Gyro CS 핀 설정
 
@@ -67,7 +70,7 @@ void can_receive_stub(VehicleData &data)
 // --- [LTE Cat.M1 MQTT Interface Placeholder] --- [cite: 41, 612]
 void mqtt_publish_json(const VehicleData &data)
 {
-    StaticJsonDocument<256> doc;
+    JsonDocument doc;
     doc["ts"] = data.timestamp;
     doc["rpm"] = data.rpm;
     doc["tps"] = data.tps;
@@ -122,7 +125,6 @@ void SensorTask(void *pvParameters)
  */
 void LoggerTask(void *pvParameters)
 {
-    File logFile;
     if (SD.begin())
     {
         logFile = SD.open("/log_01.csv", FILE_WRITE);
