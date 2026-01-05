@@ -57,7 +57,7 @@ Bmi088 imu(SPI, AccelCS, GyroCS); // SPI, Accel/Gyro CS 핀 설정
 // 향후 DBC 파싱 및 실제 CAN 구현 시 이 부분을 확장함
 void can_init()
 {
-    Serial.println("[CAN] Initializing SN65HVD230...");
+    Serial.println("[CAN] Initializing SN65HVD230....");
 }
 
 void can_receive_stub(VehicleData &data)
